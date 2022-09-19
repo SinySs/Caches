@@ -11,7 +11,7 @@ int main()
     int n;
     int hits = 0;
 
-    std::cin >> n >> m;
+    std::cin >> m >> n;
     assert(std::cin.good());
 
     cache::lfu_cache_t<int> cache{m};
@@ -21,8 +21,9 @@ int main()
         std::cin >> q;
         assert(std::cin.good());
 
-        if(cache.loookup_update(q, slow_get_page_int))
+        if(cache.loookup_update(q, slow_get_page_int)) {
             hits++;
+        }
     }
 
     std::cout << hits << std::endl;

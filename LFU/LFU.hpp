@@ -16,7 +16,6 @@ template <typename T, typename KeyT = int> class lfu_cache_t
         KeyT key_;
     };
 
-
     size_t size_ = 0;
     size_t capacity_ = 0;
     using lfu_iterator = typename std::multimap<size_t, data>::iterator;
@@ -42,15 +41,14 @@ template <typename T, typename KeyT = int> class lfu_cache_t
             erase();
         }
 
-        hash_[key] = freq_map_.emplace_hint(freq_map_.begin(), START_TIME, new_elem);
+        hash_[key] = freq_map_.emplace(START_TIME, new_elem);
         size_++;
     }
 
     void update(KeyT key, lfu_iterator hit)
     {
-        auto update_elem = std::make_pair(hit->first + 1, hit->second);
         freq_map_.erase(hit);
-        hash_[key] = freq_map_.emplace_hint(freq_map_.end(), update_elem);
+        hash_[key] = freq_map_.emplace(hit->first + 1, hit->second);
     }
 
 public:
