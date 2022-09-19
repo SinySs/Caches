@@ -6,10 +6,10 @@ def search_next(n, arr, size):
             return i
     return size + 1
 
-
+f_data = open('data.txt', 'w')
+f_answer = open('answers.txt', 'w')
 for j in range(5):
-    f_data = open('data' + str(j) +'.txt', 'w')
-    f_answer = open('answers' + str(j) +'.txt', 'w')
+
     size = rnd.randint(1, 20)
     max_number = rnd.randint(4, 10)
     cash_size = rnd.randint(1, 5)
@@ -45,8 +45,9 @@ for j in range(5):
     f_data.write(str(cash_size) + ' ' + str(size) + '\n')
     for i in range(size):
         f_data.write(str(arr[i]) + ' ')
+    f_data.write('\n')
     
 
-    f_answer.write(str(hits))
-    f_data.close()
-    f_answer.close()
+    f_answer.write(str(hits) + '\n')
+f_data.close()
+f_answer.close()

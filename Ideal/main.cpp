@@ -19,10 +19,8 @@ int main()
     for(size_t i = 0; i < n; i++) {
         std::cin >> v[i];
         assert(std::cin.good());
-
-
     }
 
-    std::cout << cashe::count_ideal_hits(m, v);
+    std::cout << cache::count_ideal_hits(m, v);
 
 }
