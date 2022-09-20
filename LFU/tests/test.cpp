@@ -1,10 +1,14 @@
 #include <iostream>
 #include <fstream>
 #include <assert.h>
+#include <vector>
 
 #include "../LFU.hpp"
 
+
 int slow_get_page_int(int key) { return key; }
+
+
 
 int main()
 {
