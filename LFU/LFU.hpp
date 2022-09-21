@@ -54,7 +54,7 @@ template <typename T, typename KeyT = int> class lfu_cache_t
 public:
     lfu_cache_t(size_t cache_size) : capacity_(cache_size) {}
 
-    bool full() { return size_ == capacity_; }
+    bool full() const { return size_ == capacity_; }
 
     template <typename F> bool loookup_update(KeyT key, F slow_get_page_int)
     {

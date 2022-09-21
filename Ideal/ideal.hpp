@@ -66,7 +66,7 @@ template <typename T, typename KeyT = int> class ideal_cache_t
 
 
 public:
-    bool full() { return size_ == capacity_; }
+    bool full() const { return size_ == capacity_; }
 
     ideal_cache_t(size_t cache_size, const std::vector<T>& v) : capacity_(cache_size)
     {
@@ -97,7 +97,6 @@ public:
         }
 
         return true;
-
 
     }
 
