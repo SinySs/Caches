@@ -7,3 +7,6 @@ name = test
 
 all:
 		$(CPP) $(CPPFLAGS) $(SRC) -o $(name)
+
+huge:
+		$(CPP) $(CPPFLAGS) huge_test.cpp -o huge_test

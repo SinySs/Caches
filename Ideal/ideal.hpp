@@ -15,14 +15,20 @@ namespace cache
 
 template <typename T, typename KeyT = int> class ideal_cache_t
 {
+    struct data
+    {
+        T data_;
+        KeyT key_;
+    };
+
     size_t size_ = 0;
     size_t capacity_ = 0;
 
-    std::unordered_map<T, std::deque<int>> all_calls_;
-    std::map<int, T> cache_;
-    std::unordered_set<T> elems_in_;
+    std::unordered_map<KeyT, std::deque<int>> all_calls_;
+    std::map<int, data> cache_;
+    std::unordered_set<KeyT> elems_in_;
 
-    void fill_calls(const std::vector<T>& v)
+    void fill_calls(const std::vector<int>& v)
     {
         for(auto i = 0; i < v.size(); i++) {
             auto &que = all_calls_.emplace(v[i], std::deque<int> ()).first->second;
@@ -30,13 +36,7 @@ template <typename T, typename KeyT = int> class ideal_cache_t
         }
     }
 
-    void upppp(KeyT key)
-    {
-        auto &que = all_calls_.at(key);
-        que.pop_front();
-    }
-
-    void insert(KeyT key)
+    template <typename F> void insert(KeyT key, F slow_get_page_int)
     {
 
         auto &que = all_calls_.at(key);
@@ -50,13 +50,16 @@ template <typename T, typename KeyT = int> class ideal_cache_t
             if(removal_candidate->first < que.front())
                 return;
 
-            elems_in_.erase(removal_candidate->second);
+            elems_in_.erase(removal_candidate->second.key_);
             cache_.erase(prev(cache_.end()));
 
             size_--;
         }
+        data new_elem;
+        new_elem.key_ = key;
+        new_elem.data_ = slow_get_page_int(key);
 
-        cache_.insert({que.front(), key});
+        cache_.insert({que.front(), new_elem});
         elems_in_.insert(key);
         size_++;
 
@@ -68,20 +71,18 @@ template <typename T, typename KeyT = int> class ideal_cache_t
 public:
     bool full() const { return size_ == capacity_; }
 
-    ideal_cache_t(size_t cache_size, const std::vector<T>& v) : capacity_(cache_size)
+    ideal_cache_t(size_t cache_size, const std::vector<int>& v) : capacity_(cache_size)
     {
         fill_calls(v);
     }
 
-    bool loookup_update(KeyT key)
+    template <typename F> bool loookup_update(KeyT key, F slow_get_page_int)
     {
         auto hit = elems_in_.find(key);
         if(hit == elems_in_.end()) {
-            insert(key);
+            insert(key, slow_get_page_int);
             return false;
-
         }
-
 
         auto &que = all_calls_.at(key);
         int past_time = que.front();
@@ -93,26 +94,17 @@ public:
             size_--;
         } else {
             cache_.erase(past_time);
-            cache_.insert({que.front(), key});
+            data new_elem;
+            new_elem.key_ = key;
+            new_elem.data_ = slow_get_page_int(key);
+            cache_.insert({que.front(), new_elem});
         }
 
         return true;
-
     }
 
 };
-
-template <typename T>
-int count_ideal_hits(size_t cache_size, const std::vector<T>& v)
-{
-    int hits = 0;
-    ideal_cache_t<T> cache {cache_size, v};
-
-    for(size_t i = 0; i < v.size(); i++) {
-        if(cache.loookup_update(v[i])){
-            hits++;
-        }
-    }
-    return hits;
-}
 } // namespace cashe
+
+
+
